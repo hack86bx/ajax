@@ -9,6 +9,7 @@
 <body>
     
 <div>
+    <h1 id="text"></h1>
     <input type="radio" id="chat" name="animal" value="cat">
     <label for="chat">Chats</label>
     <input type="radio" id="chien" name="animal" value="dog">
@@ -25,30 +26,31 @@
 <div id="container"></div>
 
 <script>
+    //let randomFact = randomlist(facts);
+    let text = document.getElementById("text");
     let nombreFactInput = document.getElementById('nombreFactInput');
     let favBtn = document.getElementById('fav');
     let container = document.getElementById('container');
+    let btnSelect = document.getElementById("getFact");
 
+    btnSelect.addEventListener("click", generateFacts);
+
+    function generateFacts(){
+        $.get("https://cat-fact.herokuapp.com/facts/random?animal_type=cat", (facts,status) => {
+            console.log(facts);
+            let afficher = facts.text;
+            text.textContent = afficher;
+        });
+    }
+
+    generateFacts();
+
+    /*
     nombreFactInput.addEventListener('change', () => {
         let selectvalue = nombreFactInput.value;
-        console.log('fact nombre', selectvalue);
+       
      
     });
-
-    $.get("https://cat-fact.herokuapp.com/facts?animal_type=cat,dog,horse", facts => {
-        console.log(facts);
-        for (let fact of facts) {
-            console.log(fact.text);
-        }
-    });
-
-
-
-
-
-
-
-
 
     function favfact(fact) {
         let stfav = JSON.parse(localStorage.getItem('favf')) || [];
@@ -65,6 +67,7 @@
             container.appendChild(p);
         });
     });
+    */
 </script>
 </body>
 </html>
