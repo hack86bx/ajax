@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    
+<div>
+    <input type="radio" id="chat" name="animal" value="cat">
+    <label for="chat">Chats</label>
+    <input type="radio" id="chien" name="animal" value="dog">
+    <label for="chien">Chiens</label>
+    <input type="radio" id="cheval" name="animal" value="horse">
+    <label for="cheval">Chevaux</label>
+    </br>
+    <input type="number" id="nombreFactInput" name="nombreFact">
+    <label for="nombreFact">Nombre de facts à afficher:</label>
+</div>
+
+<button id="getFact">Chercher un fact</button>
+<button id="fav">Afficher mes facts préférés</button>
+<div id="container"></div>
+
+<script>
+    let nombreFactInput = document.getElementById('nombreFactInput');
+    let favBtn = document.getElementById('fav');
+    let container = document.getElementById('container');
+
+    nombreFactInput.addEventListener('change', () => {
+        let selectvalue = nombreFactInput.value;
+        console.log('fact nombre', selectvalue);
+     
+    });
+
+    $.get("https://cat-fact.herokuapp.com/facts?animal_type=cat,dog,horse", facts => {
+        console.log(facts);
+        for (let fact of facts) {
+            console.log(fact.text);
+        }
+    });
+
+
+
+
+
+
+
+
+
+    function favfact(fact) {
+        let stfav = JSON.parse(localStorage.getItem('favf')) || [];
+        stfav.push(fact);
+        localStorage.setItem('favf', JSON.stringify(stfav));
+    }
+
+    favBtn.addEventListener('click', () => {
+        let stfav = JSON.parse(localStorage.getItem('favf')) || [];
+        container.innerHTML = "";
+        stfav.forEach(fact => {
+            let p = document.createElement('p');
+            p.textContent = fact.text;
+            container.appendChild(p);
+        });
+    });
+</script>
+</body>
+</html>
