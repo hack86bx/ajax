@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX JQuery</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="factsContainer">
+
+    </div>
+
+    <input type="radio" id="catCategory" name="animalType" value="cat" checked>
+    <label for="catCategory">Cat</label>
+    <input type="radio" id="dogCategory" name="animalType" value="dog">
+    <label for="dogCategory">Dog</label>
+    <input type="radio" id="horseCategory" name="animalType" value="horse">
+    <label for="horseCategory">Horse</label>
+
+    </br>
+    <input type="range" id="factsRange" value="1" min="1" max="10" oninput="this.nextElementSibling.value = this.value">
+<output>1</output>
+
+    </br>
+    <button id="getFacts">Get fact</button>
+
+    <script>
+        let factsContainer = document.querySelector('#factsContainer'),
+            btnGetFacts    = document.querySelector('#getFacts'),
+            factsRange     = document.querySelector('#factsRange');
+
+        btnGetFacts.addEventListener('click', getFact);
+
+        function getFact() {
+            let checkedAnimalCategory = document.querySelector("input[name='animalType']:checked"),
+                animalCategory        = checkedAnimalCategory.value,
+                factsAmount           = factsRange.value;
+
+
+            $.get(`https://cat-fact.herokuapp.com/facts/random?animal_type=${animalCategory}&amount=${factsAmount}`, (data) => {
+                let isArray = Array.isArray(data);
+
+                factsContainer.replaceChildren();
+
+                if (isArray) {
+                    for(let fact of data) {
+                        let factText = fact.text;
+                        factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p>`);
+                    }
+                } else {
+                    let factText = data.text;
+                    factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p>`);
+                }
+            })
+        };
+        
+        getFact();
+    </script>
+</body>
+</html>
