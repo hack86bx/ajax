@@ -7,9 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="factsContainer">
-
-    </div>
+    <div id="factsContainer"></div>
 
     <input type="radio" id="catCategory" name="animalType" value="cat" checked>
     <label for="catCategory">Cat</label>
@@ -18,50 +16,51 @@
     <input type="radio" id="horseCategory" name="animalType" value="horse">
     <label for="horseCategory">Horse</label>
 
-    </br>
+    <br>
     <input type="range" id="factsRange" value="1" min="1" max="10" oninput="this.nextElementSibling.value = this.value">
-<output>1</output>
+    <output>1</output>
 
-    </br>
+    <br>
     <button id="getFacts">Get fact</button>
-    <button id="favorie">favorie</button>
+    <button id="favorie">Favorite</button>
 
     <script>
         let factsContainer = document.querySelector('#factsContainer'),
-            btnGetFacts    = document.querySelector('#getFacts'),
-            factsRange     = document.querySelector('#factsRange');
-            btnFavorie = document.querySelector('#favorie'),
+            btnGetFacts = document.querySelector('#getFacts'),
+            factsRange = document.querySelector('#factsRange'),
+            btnFavorite = document.querySelector('#favorie');
 
         btnGetFacts.addEventListener('click', getFact);
+        btnFavorite.addEventListener('click', showFavorite);
 
         function getFact() {
             let checkedAnimalCategory = document.querySelector("input[name='animalType']:checked"),
-                animalCategory        = checkedAnimalCategory.value,
-                factsAmount           = factsRange.value;
-
+                animalCategory = checkedAnimalCategory.value,
+                factsAmount = factsRange.value;
 
             $.get(`https://cat-fact.herokuapp.com/facts/random?animal_type=${animalCategory}&amount=${factsAmount}`, (data) => {
                 let isArray = Array.isArray(data);
 
-                factsContainer.replaceChildren();
+                factsContainer.innerHTML = '';
 
                 if (isArray) {
-                    for(let fact of data) {
+                    for (let fact of data) {
                         let factText = fact.text;
-                        factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p><button onclick="console.log(this.previousElementSibling)">LIKE</button>`);
+                        factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p>`);
                     }
                 } else {
                     let factText = data.text;
-                    factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p><button onclick="console.log(this.previousElementSibling)">LIKE</button>`);
+                    factsContainer.insertAdjacentHTML('beforeend', `<p>${factText}</p>`);
                 }
-            })
-        };
-        
-        function favorie() {
-            let storedFavorie = localStorage.getItem('favorieFact');
-            let facts = JSON.parse(storedFavorie);
-            factsContainer.replaceChildren();
-            facts.forEach(fact => {
+            });
+        }
+
+        function showFavorite() {
+            let storedFavorites = localStorage.getItem('favoriteFacts');
+            storedFavorites = storedFavorites ? JSON.parse(storedFavorites) : [];
+            
+            factsContainer.innerHTML = '';
+            storedFavorites.forEach(fact => {
                 let p = document.createElement('p');
                 p.textContent = fact.text;
                 factsContainer.appendChild(p);
